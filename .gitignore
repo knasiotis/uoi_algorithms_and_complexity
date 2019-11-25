@@ -38,4 +38,4 @@ Thumbs.db
 
 # Directories #
 GoogleORtools/*
-src/.vscode/*
+/src/.vscode/*
