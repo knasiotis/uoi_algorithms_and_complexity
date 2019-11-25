@@ -1,6 +1,6 @@
 # INSTRUCTIONS #
 ### Consider the following directory:
-![Directory listing](img/directoryimg.png?raw=true "Title")
+![Directory listing](img/directoryimg.png?raw=true "ls")
 
 #### Build&Run Guide for Windows
 1. Open the *x64 Native Tools Command Prompt for VS* xxxx
