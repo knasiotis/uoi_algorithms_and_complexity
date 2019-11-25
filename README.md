@@ -1,8 +1,8 @@
-# INSTRUCTIONS #
+# RUN INSTRUCTIONS #
 ###Consider the following directory:\
-![Directory listing](img/directoryimg.png?raw=true "ls")\
+![Directory listing](img/directoryimg.png?raw=true "Title")\
 
-####To Build and Run
+####Build&Run Guide
 1. Run x64 Native Tools Command Prompt for VS xxxx
-2. ```chdir``` into Google OR Tools
-3. ```tools\make run SOURCE=..\src\knapsack.cc```
+2. ```chdir "Google OR Tools"``` 
+3.```tools\make run SOURCE=..\knasiotis\knapsack.cc```
