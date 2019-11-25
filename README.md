@@ -1,5 +1,5 @@
 # INSTRUCTIONS #
-### Consider the following directory:
+### Consider the following directory tree:
 ![Directory listing](img/directoryimg.png?raw=true "ls")
 
 #### Build&Run Guide for Windows
