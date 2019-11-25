@@ -1,4 +1,4 @@
-# RUN INSTRUCTIONS #
+# INSTRUCTIONS #
 ### Consider the following directory:
 ![Directory listing](img/directoryimg.png?raw=true "Title")
 
