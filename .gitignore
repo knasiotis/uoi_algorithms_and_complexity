@@ -37,5 +37,5 @@ ehthumbs.db
 Thumbs.db
 
 # Directories #
-Google OR tools/*
-knasiotis/.vscode/*
+GoogleORtools/*
+src/.vscode/*

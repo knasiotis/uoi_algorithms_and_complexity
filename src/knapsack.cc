@@ -4,7 +4,9 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <ortools/algorithms/knapsack_solver.h>
+#include <chrono>
+#include <../GoogleORtools/include/ortools/algorithms/knapsack_solver.h>
+#include <stdio.h>
 #define problemsize 320
 
 //file reader func definition
@@ -18,7 +20,7 @@ void FileReader(
 
 //file exporter
 //input : string
-//output : result.txt
+//output : results.txt
 void FileWriter(std::string text);
 
 //filename generator to run all 320 problems
@@ -47,21 +49,23 @@ void DebugDS(
 
 int main()
 {
-    std::vector<int64> profits, capacities;
-    std::vector<std::vector<int64>> weights;
+    int problemNo = 1;
     std::vector<std::string> filenames;
-    filenames = FileNames("D:\\projects\\algocomplexity\\uoi_algorithms_and_complexity\\knapsack_prj\\");
-    // DebugDS(weights, capacities, profits, filenames); //debugging
-
+    remove("..\\src\\results.txt"); //Tries to remove previous instance of results.txt
+    filenames = FileNames("..\\knapsack_prj\\");
+    std::chrono::steady_clock::time_point tbegin = std::chrono::steady_clock::now();
     for (auto filename : filenames)
     {
+        std::vector<int64> profits, capacities;
+        std::vector<std::vector<int64>> weights;
         FileReader(filename, capacities, profits, weights);
+        FileWriter("------- Problem No: " + std::to_string(problemNo) + " Filename: " + filename + " -------");
         operations_research::RunKnapsackExample(weights, capacities, profits);
-        weights.clear();
-        profits.clear();
-        capacities.clear();
+        FileWriter("");
+        problemNo++;
     }
-
+    std::chrono::steady_clock::time_point tend = std::chrono::steady_clock::now();
+    FileWriter("Total time: " + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(tend - tbegin).count()) + "s");
     return 0;
 }
 
@@ -78,7 +82,12 @@ void RunKnapsackExample(
         "KnapsackExample");
 
     solver.Init(profits, weights, capacities);
+
+    //Exec time init
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     int64 computed_value = solver.Solve();
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    //Exec time fin
 
     // Print solution
     std::vector<int> packed_items;
@@ -106,10 +115,18 @@ void RunKnapsackExample(
     int64 total_weights =
         std::accumulate(packed_weights.begin(), packed_weights.end(), 0LL);
 
-    LOG(INFO) << "Total value: " << computed_value;
-    LOG(INFO) << "Packed items: {" << packed_items_ss.str() << "}";
-    LOG(INFO) << "Total weight: " << total_weights;
-    LOG(INFO) << "Packed weights: {" << packed_weights_ss.str() << "}";
+    // LOG(INFO) << "Total value: " << computed_value;
+    // LOG(INFO) << "Packed items: {" << packed_items_ss.str() << "}";
+    // LOG(INFO) << "Total weight: " << total_weights;
+    // LOG(INFO) << "Packed weights: {" << packed_weights_ss.str() << "}";
+    // LOG(INFO) << "Solver time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "ms";
+
+    //Append to file
+    FileWriter("Solver time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()) + "ms");
+    FileWriter("Total value: " + std::to_string(computed_value));
+    FileWriter("Packed items: {" + packed_items_ss.str() + "}");
+    FileWriter("Total weight: " + std::to_string(total_weights));
+    FileWriter("Packed weights: {" + packed_weights_ss.str() + "}");
 }
 } // namespace operations_research
 
@@ -158,6 +175,17 @@ void FileReader(
         input.close();
     }
 }
+
+void FileWriter(std::string text)
+{
+    std::fstream output;
+    output.open("..\\src\\results.txt", std::ios::out | std::ios::app);
+    if (output.is_open())
+    {
+        output << text << '\n';
+    }
+    output.close();
+};
 
 std::vector<std::string> FileNames(std::string path)
 {
