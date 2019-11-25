@@ -1,4 +1,4 @@
 # RUN INSTRUCTIONS #
-Consider the following directory
+###Consider the following directory: <br>
 ![Directory listing](img/directory.png?raw=true "Title")
-tools\make run SOURCE=..\knasiotis\knapsack.cc
+```tools\make run SOURCE=..\knasiotis\knapsack.cc```
