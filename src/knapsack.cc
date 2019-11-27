@@ -223,7 +223,6 @@ void FileReader(
         {
             getline(input, line);
             ss << line;
-            std::string word;
             ss >> dump >> tempprofit >> tempweight;
             ss.clear();
             profits.push_back(tempprofit);
