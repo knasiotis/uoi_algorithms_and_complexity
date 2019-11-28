@@ -5,7 +5,7 @@
 #### Prerequisites
 * [Build tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019) for Visual Studio
 * [Google OR Tools](https://developers.google.com/optimization/install/cpp/windows) Library
-(More information [here](https://developers.google.com/optimization/install))
+(More information available [here](https://developers.google.com/optimization/install))
 
 #### Build&Run Guide for Windows
 1. Open the *x64 Native Tools Command Prompt for VS* xxxx
