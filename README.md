@@ -1,5 +1,5 @@
 # INSTRUCTIONS #
-### Consider the following directory tree:
+### Consider the following directory listing:
 ![Directory listing](img/directoryimg.png?raw=true)
 
 #### Prerequisites
