@@ -8,7 +8,9 @@
 (More information available [here](https://developers.google.com/optimization/install))
 
 #### Build&Run Guide for Windows
-1. Open the *x64 Native Tools Command Prompt for VS* xxxx
-2. ```chdir "Google OR Tools"``` 
-3. Run the following command ```tools\make run SOURCE=..\src\knapsack.cc```
-4. Runtime results are saved in src/results.csv
+1. Extract OR Tools .zip in the cloned directory
+2. Follow Google OR Tools Installation Procedure
+3. Open the *x64 Native Tools Command Prompt for VS* xxxx
+4. ```chdir "Google OR Tools"``` 
+5. Run the following command ```tools\make run SOURCE=..\src\knapsack.cc```
+6. Runtime results are saved in src/results.csv
