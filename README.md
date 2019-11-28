@@ -4,7 +4,7 @@
 
 #### Prerequisites
 * [Build tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019) for Visual Studio
-* [Google OR Tools](https://developers.google.com/optimization/install/cpp/windows9) Library
+* [Google OR Tools](https://developers.google.com/optimization/install/cpp/windows) Library
 (More information [here](https://developers.google.com/optimization/install))
 
 #### Build&Run Guide for Windows
