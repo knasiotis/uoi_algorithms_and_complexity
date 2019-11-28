@@ -66,7 +66,7 @@ int main()
     //Filename generator
     filenames = FileNames("..\\knapsack_prj\\");
 
-    FileWriter("Problem Number,ValuePersonal,ValueORTools,TimePersonal(ms),TimeORTools(ms), \n");
+    FileWriter("Problem Number,ValuePersonal,ValueORTools,TimePersonal(ms),TimeORTools(ms) \n");
     for (auto filename : filenames)
     {
         int64 ORValue, PValue = 0;
