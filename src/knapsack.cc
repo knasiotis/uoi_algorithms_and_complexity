@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 #include <chrono>
+#include <ratio>
 #include <../GoogleORtools/include/ortools/algorithms/knapsack_solver.h>
 #include <stdio.h>
 #define problemsize 320
@@ -21,7 +22,7 @@ void FileReader(
 //file exporter
 //input : string
 //output : results.txt
-void FileWriter(int example, std::string text);
+void FileWriter(std::string text);
 
 //filename generator to run all 320 problems
 //input : path
@@ -30,11 +31,11 @@ std::vector<std::string> FileNames(std::string path);
 
 //0-1 knapsack function
 //input : weights, capacity, profit
-//output : value, items, weight
+//output : maximum value
 //knapsack example from google or tools
 namespace operations_research
 {
-void RunKnapsackExample(
+int64 RunKnapsackExample(
     std::vector<std::vector<int64>> &weights,
     std::vector<int64> &capacities,
     std::vector<int64> &profits);
@@ -42,7 +43,7 @@ void RunKnapsackExample(
 
 //"Personal" implementation of the 0-1 knapsack problem
 //Same io as Google OR tools implementation
-void MyKnapsack(
+int64 MyKnapsack(
     std::vector<std::vector<int64>> &weights,
     std::vector<int64> &capacities,
     std::vector<int64> &profits);
@@ -58,44 +59,52 @@ int main()
 {
     int problemNo = 1;
     std::vector<std::string> filenames;
-    remove("..\\src\\results1.txt"); //Tries to remove previous instance of results.txt
-    remove("..\\src\\results2.txt"); //Tries to remove previous instance of results.txt
+
+    //Removes previously generated file
+    remove("..\\src\\results.csv");
+
+    //Filename generator
     filenames = FileNames("..\\knapsack_prj\\");
-    std::chrono::steady_clock::time_point tbegin = std::chrono::steady_clock::now();
+
+    FileWriter("Problem Number,ValuePersonal,ValueORTools,TimePersonal(ms),TimeORTools(ms), \n");
     for (auto filename : filenames)
     {
+        int64 ORValue, PValue = 0;
         std::vector<int64> profits, capacities;
         std::vector<std::vector<int64>> weights;
+
+        //Prepares the input
         FileReader(filename, capacities, profits, weights);
-        FileWriter(1,"------- Problem No: " + std::to_string(problemNo) + " Filename: " + filename + " -------");
-        operations_research::RunKnapsackExample(weights, capacities, profits);
-        FileWriter(1,"");
+
+        FileWriter(std::to_string(problemNo) + ",");
+
+        //Personal implementation
+        auto tbegin = std::chrono::high_resolution_clock::now();
+        PValue = MyKnapsack(weights, capacities, profits);
+        auto tend = std::chrono::high_resolution_clock::now();
+
+        //Google OR tools
+        auto begin = std::chrono::high_resolution_clock::now();
+        ORValue = operations_research::RunKnapsackExample(weights, capacities, profits);
+        auto end = std::chrono::high_resolution_clock::now();
+        
+        std::chrono::duration<double, std::milli> t1 = end - begin;
+        std::chrono::duration<double, std::milli> t2 = tend - tbegin;
+
+        FileWriter(std::to_string(PValue) + "," + std::to_string(ORValue) + "," +
+                   std::to_string(t2.count()) + "," +
+                   std::to_string(t1.count()));
+
+        //On to the next problem
+        FileWriter("\n");
         problemNo++;
     }
-    std::chrono::steady_clock::time_point tend = std::chrono::steady_clock::now();
-    FileWriter(1,"Total time: " + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(tend - tbegin).count()) + "s");
-    
-    //Another Knapsack run
-    problemNo = 1;
-    std::chrono::steady_clock::time_point tbegin2 = std::chrono::steady_clock::now();
-    for (auto filename : filenames)
-    {
-        std::vector<int64> profits, capacities;
-        std::vector<std::vector<int64>> weights;
-        FileReader(filename, capacities, profits, weights);
-        FileWriter(2,"------- Problem No: " + std::to_string(problemNo) + " Filename: " + filename + " -------");
-        MyKnapsack(weights, capacities, profits);
-        FileWriter(2,"");
-        problemNo++;
-    }
-    std::chrono::steady_clock::time_point tend2 = std::chrono::steady_clock::now();
-    FileWriter(2,"Total time: " + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(tend2 - tbegin2).count()) + "s");
     return 0;
 }
 
 namespace operations_research
 {
-void RunKnapsackExample(
+int64 RunKnapsackExample(
     std::vector<std::vector<int64>> &weights,
     std::vector<int64> &capacities,
     std::vector<int64> &profits)
@@ -107,75 +116,33 @@ void RunKnapsackExample(
 
     solver.Init(profits, weights, capacities);
 
-    //Exec time init
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     int64 computed_value = solver.Solve();
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    //Exec time fin
-
-    // // Print solution
-    // std::vector<int> packed_items;
-    // for (std::size_t i = 0; i < profits.size(); ++i)
-    // {
-    //     if (solver.BestSolutionContains(i))
-    //         packed_items.push_back(i);
-    // }
-    // std::ostringstream packed_items_ss;
-    // std::copy(packed_items.begin(), packed_items.end() - 1,
-    //           std::ostream_iterator<int>(packed_items_ss, ", "));
-    // packed_items_ss << packed_items.back();
-
-    // std::vector<int64> packed_weights;
-    // packed_weights.reserve(packed_items.size());
-    // for (const auto &it : packed_items)
-    // {
-    //     packed_weights.push_back(weights[0][it]);
-    // }
-    // std::ostringstream packed_weights_ss;
-    // std::copy(packed_weights.begin(), packed_weights.end() - 1,
-    //           std::ostream_iterator<int>(packed_weights_ss, ", "));
-    // packed_weights_ss << packed_weights.back();
-
-    // int64 total_weights =
-    //     std::accumulate(packed_weights.begin(), packed_weights.end(), 0LL);
-
-    // LOG(INFO) << "Total value: " << computed_value;
-    // LOG(INFO) << "Packed items: {" << packed_items_ss.str() << "}";
-    // LOG(INFO) << "Total weight: " << total_weights;
-    // LOG(INFO) << "Packed weights: {" << packed_weights_ss.str() << "}";
-    // LOG(INFO) << "Solver time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "ms";
-
-    //Append to file
-    FileWriter(1,"Solver time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()) + "ms");
-    FileWriter(1,"Total value: " + std::to_string(computed_value));
-    // FileWriter(1,"Packed items: {" + packed_items_ss.str() + "}");
-    // FileWriter(1,"Total weight: " + std::to_string(total_weights));
-    // FileWriter(1,"Packed weights: {" + packed_weights_ss.str() + "}");
+    return computed_value;
 }
 } // namespace operations_research
 
 // A utility function that returns maximum of two integers
 int64 maximum(int64 a, int64 b) { return (a > b) ? a : b; }
 
-void MyKnapsack(
+int64 MyKnapsack(
     std::vector<std::vector<int64>> &weights,
     std::vector<int64> &capacities,
     std::vector<int64> &profits)
 {
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     int64 i, w;
     std::vector<std::vector<int64>> K;
     std::vector<int64> temp;
-    K.reserve(profits.size()+1);
-    temp.reserve(capacities[0]+1);
-    for(i=0;i<=capacities[0]+1;i++){
+    K.reserve(profits.size() + 1);
+    temp.reserve(capacities[0] + 1);
+    for (i = 0; i <= capacities[0] + 1; i++)
+    {
         temp.push_back(0);
     }
     // Build table K[][] in bottom up manner
-    for(i=0;i<=profits.size()+1;i++){
+    for (i = 0; i <= profits.size() + 1; i++)
+    {
         K.push_back(temp);
     }
-
 
     for (i = 0; i <= profits.size(); i++)
     {
@@ -189,9 +156,8 @@ void MyKnapsack(
                 K[i][w] = K[i - 1][w];
         }
     }
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    FileWriter(2,"Solver time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()) + "ms");
-    FileWriter(2,"Total value: " + std::to_string(K[profits.size()][capacities[0]]));
+
+    return K[profits.size()][capacities[0]];
 }
 
 void FileReader(
@@ -237,16 +203,20 @@ void FileReader(
         weights.push_back(tempweightvec);
         input.close();
     }
+    else
+    {
+        std::cout << "error opening file " << filename << std::endl;
+        exit(-1);
+    }
 }
 
-void FileWriter(int example, std::string text)
+void FileWriter(std::string text)
 {
     std::fstream output;
-    output.open("..\\src\\results" + std::to_string(example) + ".txt",
-                std::ios::out | std::ios::app);
+    output.open("..\\src\\results.csv", std::ios::out | std::ios::app);
     if (output.is_open())
     {
-        output << text << '\n';
+        output << text;
     }
     output.close();
 };
@@ -308,3 +278,35 @@ void DebugDS(
         std::cout << x << std::endl;
     }
 }
+
+// // Print solution
+// std::vector<int> packed_items;
+// for (std::size_t i = 0; i < profits.size(); ++i)
+// {
+//     if (solver.BestSolutionContains(i))
+//         packed_items.push_back(i);
+// }
+// std::ostringstream packed_items_ss;
+// std::copy(packed_items.begin(), packed_items.end() - 1,
+//           std::ostream_iterator<int>(packed_items_ss, ", "));
+// packed_items_ss << packed_items.back();
+
+// std::vector<int64> packed_weights;
+// packed_weights.reserve(packed_items.size());
+// for (const auto &it : packed_items)
+// {
+//     packed_weights.push_back(weights[0][it]);
+// }
+// std::ostringstream packed_weights_ss;
+// std::copy(packed_weights.begin(), packed_weights.end() - 1,
+//           std::ostream_iterator<int>(packed_weights_ss, ", "));
+// packed_weights_ss << packed_weights.back();
+
+// int64 total_weights =
+//     std::accumulate(packed_weights.begin(), packed_weights.end(), 0LL);
+
+// LOG(INFO) << "Total value: " << computed_value;
+// LOG(INFO) << "Packed items: {" << packed_items_ss.str() << "}";
+// LOG(INFO) << "Total weight: " << total_weights;
+// LOG(INFO) << "Packed weights: {" << packed_weights_ss.str() << "}";
+// LOG(INFO) << "Solver time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "ms";
