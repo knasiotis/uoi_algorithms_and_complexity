@@ -3,7 +3,7 @@
 ![Directory listing](img/directoryimg.png?raw=true)
 
 #### Prerequisites
-* [Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019) for Visual Studio (Note: A Complete Visual Studio installation might be required)
+* [Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019) for Visual Studio (Note: A Complete Visual Studio installation with C++ support might be required)
 * [Google OR-Tools](https://developers.google.com/optimization/install/cpp/windows) Library
 (More information available [here](https://developers.google.com/optimization/install))
 
