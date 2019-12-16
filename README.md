@@ -13,5 +13,5 @@
 3. Open the *x64 Native Tools Command Prompt for VS* xxxx
 4. ```chdir "Google OR Tools"``` 
 5. Run the following command ```tools\make run SOURCE=..\src\main.cc```
-5b. For unit tests run ```tools\make run SOURCE=..\src\tests.cc```
-6. Runtime results are saved in src/results.csv
+6. For unit tests run ```tools\make run SOURCE=..\src\tests.cc```
+7. Runtime results are saved in src/results.csv
